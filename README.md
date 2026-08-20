@@ -1,7 +1,10 @@
 # device_systems API
 
-API REST enfocada en la gestión del recurso usuarios, construida con FastAPI.
-Desarrollada para el reto integrador de la guía de fundamentos de FastAPI.
+## Descripción de la aplicación
+
+**device_systems** es una API REST construida con **FastAPI** orientada a la gestión de usuarios de un sistema de dispositivos. Permite crear, consultar y filtrar usuarios con validaciones estrictas de datos gracias a **Pydantic v2**. La API implementa los métodos HTTP GET y POST, maneja Path Parameters y Query Parameters, incluye Response Models y cabeceras HTTP personalizadas.
+
+---
 
 ## Instalación de dependencias
 
@@ -18,6 +21,8 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+---
+
 ## Ejecución del servidor
 
 Para ejecutar el servidor de desarrollo, utiliza Uvicorn:
@@ -26,57 +31,93 @@ Para ejecutar el servidor de desarrollo, utiliza Uvicorn:
 uvicorn app.main:app --reload
 ```
 
-La API estará disponible en `http://127.0.0.1:8000`.
+La API estará disponible en `http://127.0.0.1:8000`.  
 La documentación interactiva (Swagger UI) estará en `http://127.0.0.1:8000/docs`.
+
+---
 
 ## Tabla de Endpoints
 
-| Método | Endpoint         | Descripción                                     |
-|--------|------------------|-------------------------------------------------|
-| GET    | `/users`         | Listar todos los usuarios. Permite filtros.     |
-| GET    | `/users/{id}`    | Consultar un usuario por ID.                    |
-| POST   | `/users`         | Registrar un nuevo usuario.                     |
+| Método | Endpoint               | Descripción                                          |
+|--------|------------------------|------------------------------------------------------|
+| GET    | `/users`               | Listar todos los usuarios. Permite filtros.          |
+| GET    | `/users?role=admin`    | Filtrar usuarios por rol (admin, support, user).     |
+| GET    | `/users?is_active=true`| Filtrar usuarios por estado activo/inactivo.         |
+| GET    | `/users/{user_id}`     | Consultar un usuario específico por su ID.           |
+| POST   | `/users`               | Registrar un nuevo usuario con validación de datos.  |
+
+---
 
 ## Ejemplos de Peticiones
 
-### POST /users
-
-Crear un usuario:
+### POST /users — Crear un usuario
 
 ```json
-POST /users
+POST http://127.0.0.1:8000/users
+Content-Type: application/json
+
 {
-  "name": "Juan Perez",
-  "email": "juan.perez@example.com",
+  "name": "Ana Silva",
+  "email": "ana@correo.com",
   "role": "admin",
   "is_active": true
 }
 ```
 
-### GET /users
-
-Listar todos los usuarios activos:
+### GET /users — Listar todos los usuarios
 
 ```
-GET /users?is_active=true
+GET http://127.0.0.1:8000/users
 ```
 
-### GET /users/{id}
-
-Obtener el usuario con ID 1:
+### GET /users?role=admin — Filtrar por rol
 
 ```
-GET /users/1
+GET http://127.0.0.1:8000/users?role=admin
 ```
+
+### GET /users?is_active=true — Filtrar por estado
+
+```
+GET http://127.0.0.1:8000/users?is_active=true
+```
+
+### GET /users/{user_id} — Obtener usuario por ID
+
+```
+GET http://127.0.0.1:8000/users/1
+```
+
+---
 
 ## Capturas de Swagger UI / Evidencias de pruebas
 
-*(Agrega aquí las capturas de pantalla de Swagger UI probando los endpoints)*
-- Captura de GET /users
-- Captura de GET /users/{user_id}
-- Captura de POST /users
-- Captura de validaciones y errores (ej. correo duplicado, formato inválido)
+### Swagger UI — Documentación automática
+![Swagger UI](Evidencias/Captura_SwaggerUI.png)
+
+### POST /users — Creación exitosa (201 Created)
+![Creación Exitosa](Evidencias/Creación_Exitosa.png)
+
+### GET /users — Listar usuarios
+![Listar Usuarios](Evidencias/Listar_Usuarios.png)
+
+### GET /users/{user_id} — Búsqueda por ID
+![Búsqueda por ID](Evidencias/Busqueda_ID.png)
+
+### Headers HTTP personalizados (X-App-Name / X-API-Version)
+![Headers HTTP](Evidencias/Headers.png)
+
+### Error — Correo duplicado (400 Bad Request)
+![Error Correo Duplicado](Evidencias/Error_correo.png)
+
+### Error — Correo con formato inválido (422)
+![Error Correo Inválido](Evidencias/Correo_invalido.png)
+
+### Error — Nombre corto y rol inválido (422)
+![Error Nombre y Rol](Evidencias/Error_Nombrecorto_Rolinvalido.png)
+
+---
 
 ## Reflexión
 
-El uso de FastAPI facilita enormemente la creación de APIs REST gracias a su integración con Pydantic para la validación de datos y la auto-generación de documentación con Swagger UI. Además, el uso de tipado estático ayuda a prevenir errores y mejorar la experiencia de desarrollo.
+El uso de **FastAPI** facilita enormemente la creación de APIs REST gracias a su integración con **Pydantic v2** para la validación automática de datos y la auto-generación de documentación interactiva con Swagger UI. El tipado estático de Python ayuda a prevenir errores en tiempo de desarrollo, y la estructura por rutas y schemas hace que el código sea limpio, organizado y fácil de mantener. Esta actividad permitió comprender cómo construir una API real con buenas prácticas desde el inicio.
