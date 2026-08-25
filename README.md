@@ -278,7 +278,12 @@ Retorna un diccionario con la configuración general de la API (nombre, versión
 ## Capturas de Swagger UI / Evidencias de pruebas
 
 ### Swagger UI — Documentación automática
-![Swagger UI](Evidencias/Captura_SwaggerUI.png)
+![Swagger UI](Evidencias/capturas_SwaggerUIV2.png)
+![Swagger UI V1](Evidencias/Captura_SwaggerUIV1.png)
+
+### ReDoc — Documentación alternativa
+![ReDoc 1](Evidencias/cap_redoc.png)
+![ReDoc 2](Evidencias/cap_redoc1.png)
 
 ### POST /users — Creación exitosa (201 Created)
 ![Creación Exitosa](Evidencias/Creación_Exitosa.png)
@@ -286,23 +291,20 @@ Retorna un diccionario con la configuración general de la API (nombre, versión
 ### GET /users — Listar usuarios
 ![Listar Usuarios](Evidencias/Listar_Usuarios.png)
 
-### GET /users/{user_id} — Búsqueda por ID
-![Búsqueda por ID](Evidencias/Busqueda_ID.png)
+### Búsqueda por ID
+![Búsqueda por ID](Evidencias/usuario_id.png)
 
 ### PUT /users/{user_id} — Actualización completa (200 OK)
-![Actualización PUT](Evidencias/PUT_update.png)
+![Actualización PUT](Evidencias/actualizar_con_PUT.png)
 
 ### PATCH /users/{user_id} — Actualización parcial (200 OK)
-![Actualización PATCH](Evidencias/PATCH_update.png)
+![Actualización PATCH](Evidencias/patch.png)
 
 ### DELETE /users/{user_id} — Eliminación (204 No Content)
-![Eliminación DELETE](Evidencias/DELETE_user.png)
-
-### Headers HTTP personalizados (X-App-Name / X-API-Version)
-![Headers HTTP](Evidencias/Headers.png)
+![Eliminación DELETE](Evidencias/delete.png)
 
 ### Error — Correo duplicado (400 Bad Request)
-![Error Correo Duplicado](Evidencias/Error_correo.png)
+![Error Correo Duplicado](Evidencias/correo_duplicado.png)
 
 ### Error — Correo con formato inválido (422)
 ![Error Correo Inválido](Evidencias/Correo_invalido.png)
