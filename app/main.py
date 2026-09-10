@@ -1,5 +1,9 @@
 from fastapi import FastAPI
+from app.database.connection import Base, engine
+from app.models.user_model import User
 from app.routes import user_routes
+
+Base.metadata.create_all(bind=engine)
 
 # Metadatos para organizar los endpoints en Swagger UI por categorías (tags)
 tags_metadata = [
@@ -26,18 +30,12 @@ API REST para la **gestión de usuarios** del sistema device_systems.
 - ➕ Crear nuevos usuarios con validación de datos
 - ✏️ Actualizar completamente un usuario — **PUT**
 - 🔧 Actualizar parcialmente un usuario — **PATCH**
-- 🗑️ Eliminar usuarios — **DELETE** *(requiere API Key)*
-- 🔒 Autenticación básica mediante cabecera `X-Api-Key`
+- 🗑️ Eliminar usuarios — **DELETE**
 
 ## Documentación interactiva
 - **Swagger UI** → `/docs`
 - **ReDoc** → `/redoc`
 
-## Autenticación (DELETE)
-Para eliminar usuarios se requiere la cabecera:
-```
-X-Api-Key: device-secret-2026
-```
     """,
     version="2.0.0",
     contact={
