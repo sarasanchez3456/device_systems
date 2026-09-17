@@ -1,63 +1,23 @@
 from fastapi import FastAPI
-from app.database.connection import Base, engine
-from app.models.user_model import User
-from app.routes import user_routes
 
-Base.metadata.create_all(bind=engine)
+from app.routes.device_routes import router as device_router
+from app.routes.loan_routes import history_router, router as loan_router
+from app.routes.user_routes import router as user_router
 
-# Metadatos para organizar los endpoints en Swagger UI por categorías (tags)
-tags_metadata = [
-    {
-        "name": "Users",
-        "description": "Operaciones CRUD sobre el recurso **usuarios**. "
-                       "Permite crear, consultar, filtrar, actualizar y eliminar usuarios del sistema.",
-    },
-    {
-        "name": "Health",
-        "description": "Endpoint de verificación del estado de la API.",
-    },
-]
-
-# Instancia principal de la aplicación con metadatos completos para Swagger/OpenAPI
 app = FastAPI(
-    title="device_systems API",
-    description="""
-API REST para la **gestión de usuarios** del sistema device_systems.
-
-## Funcionalidades
-- 📋 Listar y filtrar usuarios por rol y estado
-- 👤 Consultar usuario por ID
-- ➕ Crear nuevos usuarios con validación de datos
-- ✏️ Actualizar completamente un usuario — **PUT**
-- 🔧 Actualizar parcialmente un usuario — **PATCH**
-- 🗑️ Eliminar usuarios — **DELETE**
-
-## Documentación interactiva
-- **Swagger UI** → `/docs`
-- **ReDoc** → `/redoc`
-
-    """,
-    version="2.0.0",
-    contact={
-        "name": "device_systems",
-        "email": "soporte@devicesystems.com",
-    },
-    license_info={
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT",
-    },
-    openapi_tags=tags_metadata,
+    title="device_systems",
+    description="API para gestionar usuarios, dispositivos y préstamos con FastAPI, SQLAlchemy y Alembic.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
-# Registra todas las rutas del recurso usuarios
-app.include_router(user_routes.router)
+app.include_router(user_router, prefix="/users", tags=["Users"])
+app.include_router(device_router, prefix="/devices", tags=["Devices"])
+app.include_router(loan_router, prefix="/loans", tags=["Loans"])
+app.include_router(history_router, tags=["Loans"])
 
 
-# Endpoint raíz de verificación (health check)
-@app.get("/", tags=["Health"], summary="Verificar estado de la API")
-def read_root():
-    return {
-        "mensaje": "Bienvenido a la API device_systems v2.0.0",
-        "docs": "/docs",
-        "redoc": "/redoc",
-    }
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}

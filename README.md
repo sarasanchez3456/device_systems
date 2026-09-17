@@ -1,358 +1,364 @@
-# device_systems API
+# device_systems
 
-## Descripción de la API
+Proyecto final de FastAPI con SQLAlchemy, relaciones entre modelos, Alembic y consultas avanzadas con joins.
 
-**device_systems** es una API REST construida con **FastAPI** orientada a la gestión completa de usuarios. Implementa el **CRUD completo** (GET, POST, PUT, PATCH, DELETE) con persistencia en SQLite mediante **SQLAlchemy**, validación con **Pydantic v2**, separación de responsabilidades y manejo de errores con `HTTPException`.
-
----
-
-## Tecnologías utilizadas
-
-| Tecnología | Versión | Uso |
-|---|---|---|
-| Python | 3.11+ | Lenguaje base |
-| FastAPI | Latest | Framework web y API |
-| Pydantic v2 | Latest | Validación de datos y esquemas |
-| Uvicorn | Latest | Servidor ASGI |
-| SQLAlchemy | Latest | ORM y persistencia en SQLite |
-| email-validator | Latest | Validación de correos |
-
----
-
-## Instalación de dependencias
-
-```bash
-# 1. Crear entorno virtual
-python -m venv venv
-
-# 2. Activar entorno virtual (Windows)
-venv\Scripts\activate
-
-# 3. Instalar dependencias
-pip install -r requirements.txt
-```
-
----
-
-## Ejecución del servidor
-
-```bash
-uvicorn app.main:app --reload
-```
-
-| Interfaz | URL |
-|---|---|
-| API | `http://127.0.0.1:8000` |
-| Swagger UI | `http://127.0.0.1:8000/docs` |
-| ReDoc | `http://127.0.0.1:8000/redoc` |
-
----
+## Objetivo
+Evolucionar la API REST para gestionar usuarios, dispositivos y préstamos con integridad referencial, migraciones versionadas y consultas con datos relacionados.
 
 ## Estructura del proyecto
 
-```
+```text
 device_systems/
 ├── app/
-│   ├── main.py                        # Instancia FastAPI, metadatos, router
 │   ├── database/
-│   │   └── connection.py              # Engine, sesiones y Base declarativa
+│   │   └── connection.py
 │   ├── models/
-│   │   └── user_model.py              # Modelo ORM de la tabla users
+│   │   ├── user_model.py
+│   │   ├── device_model.py
+│   │   └── loan_model.py
 │   ├── schemas/
-│   │   └── user_schema.py             # Modelos Pydantic (entrada y salida)
-│   ├── dependencies/
-│   │   └── database_dependency.py     # Sesión por solicitud
-│   ├── services/
-│   │   └── user_service.py            # Lógica de negocio CRUD
-│   └── routes/
-│       └── user_routes.py             # Definición de endpoints
-├── device_systems.db                  # SQLite generado al iniciar la API
+│   │   ├── user_schema.py
+│   │   ├── device_schema.py
+│   │   └── loan_schema.py
+│   ├── routes/
+│   │   ├── user_routes.py
+│   │   ├── device_routes.py
+│   │   └── loan_routes.py
+│   └── main.py
+├── alembic/
+│   ├── versions/
+│   ├── env.py
+│   └── script.py.mako
+├── alembic.ini
 ├── requirements.txt
-└── README.md
+├── README.md
+├── device_systems.db
+└── tests/
+    └── test_api.py
 ```
 
----
+## Requisitos
 
-## Tabla de Endpoints
+- Python 3.13
+- FastAPI
+- SQLAlchemy
+- Alembic
+- SQLite
+- Pytest
 
-| Método | Endpoint | Descripción | Código éxito |
-|---|---|---|---|
-| `GET` | `/users` | Listar todos los usuarios | 200 OK |
-| `GET` | `/users?role=admin` | Filtrar por rol | 200 OK |
-| `GET` | `/users?is_active=true` | Filtrar por estado | 200 OK |
-| `GET` | `/users/{user_id}` | Consultar usuario por ID | 200 OK |
-| `POST` | `/users` | Crear nuevo usuario | 201 Created |
-| `PUT` | `/users/{user_id}` | Actualizar completamente un usuario | 200 OK |
-| `PATCH` | `/users/{user_id}` | Actualizar parcialmente un usuario | 200 OK |
-| `DELETE` | `/users/{user_id}` | Eliminar un usuario | 204 No Content |
+## Instalación
 
----
+```powershell
+cd "C:\Users\sarit\device_systems"
+py -3.13 -m pip install -r requirements.txt
+```
 
-## Ejemplos de peticiones y respuestas
+## Ejecución de la API
 
-### POST /users — Crear usuario
+```powershell
+cd "C:\Users\sarit\device_systems"
+py -3.13 -m uvicorn app.main:app --reload
+```
 
-**Petición:**
+La API queda disponible en:
+
+- Swagger: http://127.0.0.1:8000/docs
+- Redoc: http://127.0.0.1:8000/redoc
+
+## Alembic
+
+La estructura de Alembic ya estaba inicializada en el proyecto y por eso no se repitió el comando `alembic init` para evitar sobrescribir la carpeta de migraciones ya creada. La evidencia real del proyecto consiste en la estructura generada y en la comprobación del historial de migraciones aplicado, que se muestran a continuación.
+
+### Estructura del proyecto con Alembic
+
+![Estructura del proyecto con Alembic](evidencias/06-estructura-alembic.png)
+
+### Generar migración
+
+```powershell
+cd "C:\Users\sarit\device_systems"
+py -3.13 -m alembic revision --autogenerate -m "create users devices loans tables"
+```
+
+### Aplicar migración
+
+```powershell
+cd "C:\Users\sarit\device_systems"
+py -3.13 -m alembic upgrade head
+```
+
+### Historial de migraciones
+
+```powershell
+cd "C:\Users\sarit\device_systems"
+py -3.13 -m alembic history
+```
+
+### Evidencia del resultado
+
+El proyecto incluye la migración generada en:
+
+```text
+alembic/versions/20260917_create_users_devices_loans.py
+```
+
+La evidencia funcional de la ejecución queda resumida en la estructura del proyecto y en la validación del historial de migraciones del entorno de trabajo.
+
+## Modelos y relaciones
+
+### User
+- id
+- name
+- email
+- phone
+- is_active
+- created_at
+
+### Device
+- id
+- name
+- serial_number
+- device_type
+- brand
+- is_available
+- created_at
+
+### Loan
+- id
+- user_id
+- device_id
+- loan_date
+- return_date
+- status
+
+Relaciones implementadas:
+
+- User -> loans
+- Device -> loans
+- Loan -> user
+- Loan -> device
+
+Con `relationship()` y `back_populates` para mantener la integridad conceptual del modelo.
+
+## Endpoints principales
+
+### Users
+- GET /users
+- GET /users/{user_id}
+- POST /users
+- PUT /users/{user_id}
+- PATCH /users/{user_id}
+- DELETE /users/{user_id}
+
+### Devices
+- GET /devices
+- GET /devices/{device_id}
+- POST /devices
+- PUT /devices/{device_id}
+- PATCH /devices/{device_id}
+- DELETE /devices/{device_id}
+
+### Loans
+- GET /loans
+- GET /loans/details
+- GET /loans/{loan_id}
+- POST /loans
+- PATCH /loans/{loan_id}/return
+- GET /users/{user_id}/loans
+- GET /devices/{device_id}/loans
+
+## Ejemplos de pruebas en Swagger / Postman
+
+### Crear usuario
+
 ```json
-POST http://127.0.0.1:8000/users
-Content-Type: application/json
-
 {
-  "name": "Ana Silva",
-  "email": "ana@correo.com",
-### `get_db`
-Abre y cierra una sesión SQLAlchemy por solicitud.
-
-  "role": "admin",
-  "is_active": true
+  "name": "Ana Pérez",
+  "email": "ana@sena.edu.co",
+  "phone": "3001234567"
 }
 ```
 
-**Respuesta exitosa (201 Created):**
+### Crear dispositivo
+
+```json
+{
+  "name": "Laptop Lenovo ThinkPad",
+  "serial_number": "LEN-2024-001",
+  "device_type": "laptop",
+  "brand": "Lenovo",
+  "is_available": true
+}
+```
+
+### Crear préstamo
+
+```json
+{
+  "user_id": 1,
+  "device_id": 1,
+  "status": "active"
+}
+```
+
+### Consultar préstamos con información relacionada
+
+```http
+GET /loans/details
+```
+
+Respuesta esperada:
+
+```json
+[
+  {
+    "id": 1,
+    "status": "active",
+    "loan_date": "2026-09-17T00:00:00",
+    "return_date": null,
+    "user": {
+      "id": 1,
+      "name": "Ana Pérez",
+      "email": "ana@sena.edu.co"
+    },
+    "device": {
+      "id": 1,
+      "name": "Laptop Lenovo ThinkPad",
+      "serial_number": "LEN-2024-001",
+      "device_type": "laptop"
+    }
+  }
+]
+```
+
+### Filtrar por estado
+
+```http
+GET /loans?status=active
+```
+
+### Filtrar por tipo de dispositivo
+
+```http
+GET /loans?device_type=laptop
+```
+
+### Filtrar por fechas
+
+```http
+GET /loans?loan_date_from=2026-09-01T00:00:00&loan_date_to=2026-09-30T23:59:59
+```
+
+También están disponibles `return_date_from` y `return_date_to` para consultar devoluciones por rango.
+
+### Devolver préstamo
+
+```http
+PATCH /loans/1/return
+```
+
+Respuesta esperada:
+
 ```json
 {
   "id": 1,
-  "name": "Ana Silva",
-  "email": "ana@correo.com",
-  "role": "admin",
-  "is_active": true
+  "user_id": 1,
+  "device_id": 1,
+  "loan_date": "2026-09-17T00:00:00",
+  "return_date": "2026-09-17T00:30:00",
+  "status": "returned"
 }
 ```
-
----
-
-### GET /users — Listar usuarios
-
-```
-GET http://127.0.0.1:8000/users
-```
-
-### GET /users?role=admin — Filtrar por rol
-
-```
-GET http://127.0.0.1:8000/users?role=admin
-```
-
-### GET /users/{user_id} — Consultar por ID
-
-```
-GET http://127.0.0.1:8000/users/1
-```
-
----
-
-### PUT /users/{user_id} — Actualización completa
-
-**Petición (todos los campos requeridos):**
-```json
-PUT http://127.0.0.1:8000/users/1
-Content-Type: application/json
-
-{
-  "name": "Ana Silva Actualizada",
-  "email": "ana_nueva@correo.com",
-  "role": "support",
-  "is_active": false
-}
-```
-
-**Respuesta (200 OK):**
-```json
-{
-  "id": 1,
-  "name": "Ana Silva Actualizada",
-  "email": "ana_nueva@correo.com",
-  "role": "support",
-  "is_active": false
-}
-```
-
----
-
-### PATCH /users/{user_id} — Actualización parcial
-
-**Petición (solo los campos a modificar):**
-```json
-PATCH http://127.0.0.1:8000/users/1
-Content-Type: application/json
-
-{
-  "role": "support"
-}
-```
-
-**Respuesta (200 OK):**
-```json
-{
-  "id": 1,
-  "name": "Ana Silva",
-  "email": "ana@correo.com",
-  "role": "support",
-  "is_active": true
-}
-```
-
----
-
-### DELETE /users/{user_id} — Eliminar usuario
-
-**Petición:**
-```
-DELETE http://127.0.0.1:8000/users/1
-```
-
-**Respuesta (204 No Content):** sin cuerpo de respuesta.
-
----
-
-## Códigos de estado HTTP
-
-| Operación | Método | Código |
-|---|---|---|
-| Listar usuarios | `GET /users` | 200 OK |
-| Consultar usuario | `GET /users/{id}` | 200 OK |
-| Crear usuario | `POST /users` | 201 Created |
-| Actualizar completo | `PUT /users/{id}` | 200 OK |
-| Actualizar parcial | `PATCH /users/{id}` | 200 OK |
-| Eliminar usuario | `DELETE /users/{id}` | 204 No Content |
-| Usuario no encontrado | Cualquier método por ID | 404 Not Found |
-| Correo duplicado | `POST` o `PUT` | 400 Bad Request |
-| Body vacío en PATCH | `PATCH` | 400 Bad Request |
-| Datos inválidos | Validación Pydantic | 422 Unprocessable Entity |
-
----
 
 ## Manejo de errores
 
-La API controla los siguientes escenarios de error usando `HTTPException`:
+Se gestionan escenarios como:
 
-| Error | Código | Detalle |
-|---|---|---|
-| Usuario no encontrado | 404 | `"Usuario no encontrado"` |
-| Correo duplicado | 400 | `"El correo ya está registrado"` |
-| PATCH sin campos | 400 | `"No se enviaron campos para actualizar"` |
-| Rol no permitido | 422 | Validación automática de Pydantic |
-| Datos inválidos | 422 | Validación automática de Pydantic |
+- Usuario inexistente
+- Dispositivo inexistente
+- Dispositivo no disponible
+- Préstamo inexistente
+- Préstamo ya devuelto
+- Serial duplicado
+- Validación de datos incorrecta
 
-**Formato de respuesta de error:**
-```json
-{
-  "detail": "Usuario no encontrado"
-}
+Con códigos HTTP como:
+
+- 200 OK
+- 201 Created
+- 204 No Content
+- 400 Bad Request
+- 404 Not Found
+- 409 Conflict
+- 422 Unprocessable Entity
+
+## Pruebas funcionales mínimas
+
+Ejecutadas y validadas con pytest:
+
+```powershell
+cd "C:\Users\sarit\device_systems"
+py -3.13 -m pytest tests/test_api.py -q
 ```
 
----
+Resultado verificado:
 
-## Diferencia entre modelo y schema
-
-El modelo SQLAlchemy de `app/models/user_model.py` representa la tabla `users` y define la persistencia, los tipos de columnas y las restricciones de la base de datos. El schema Pydantic de `app/schemas/user_schema.py` representa los datos que recibe o devuelve la API y aplica validaciones como longitud mínima, formato de email y roles permitidos. Separar ambos modelos evita mezclar reglas HTTP con la estructura interna de SQLite.
-
-## Dependency Injection con Depends()
-
-FastAPI permite inyectar lógica reutilizable en los endpoints mediante `Depends()`. En este proyecto se utiliza `get_db` desde `app/dependencies/database_dependency.py` para abrir y cerrar una sesión SQLAlchemy por solicitud.
-
-```python
-@router.get("")
-def get_users(db: Session = Depends(get_db)):
-  return service.get_all_users(db)
+```text
+4 passed
 ```
 
-### `get_api_headers`
-Inyecta las cabeceras `X-App-Name` y `X-API-Version` en cada respuesta HTTP sin repetir código.
+Las pruebas cubren creación y devolución, asociaciones con usuarios y dispositivos, filtros por estado, correo, tipo y fecha, seriales duplicados, dispositivos no disponibles, estados inválidos, devolución doble e intercambio completo mediante `PUT`.
 
-```python
-@router.get("")
-def get_users(_: None = Depends(get_api_headers)):
-    ...
-```
+## Evidencias de aprendizaje
 
-### `get_api_info`
-Retorna un diccionario con la configuración general de la API (nombre, versión, descripción).
+### 1. Creación de usuario
 
----
+![Creación de usuario](evidencias/01-crear-usuario.png)
 
-## Capturas de Swagger UI / Evidencias de pruebas
+### 2. Creación de dispositivo
 
-### Colección de Postman
-[Descargar colección device_systems.postman_collection.json](Evidencias/device_systems.postman_collection.json)
+![Creación de dispositivo](evidencias/02-crear-dispositivo.png)
 
-Importa esta colección en Postman con **Import**, verifica que la API esté ejecutándose en `http://127.0.0.1:8000` y ejecuta la carpeta completa con **Run collection**. La colección guarda automáticamente el `userId` creado y valida los códigos HTTP esperados.
+### 3. Creación de préstamo
 
-### Evidencias nuevas ejecutadas en Postman
+![Creación de préstamo](evidencias/03-crear-prestamo.png)
 
-#### Crear usuario — 201 Created
-![Crear usuario 201](Evidencias/01_crear_usuario_201.png)
+### 4. Consulta de préstamos con información del usuario y el dispositivo
 
-#### Email duplicado — 400 Bad Request
-![Email duplicado 400](Evidencias/02_email_duplicado_400.png)
+![Detalle de préstamo](evidencias/04-filtro-dispositivo.png)
 
-#### Listar usuarios — 200 OK
-![Listar usuarios 200](Evidencias/03_listar_usuarios_200.png)
+### 5. Filtro por estado del préstamo
 
-#### Consultar usuario por ID — 200 OK
-![Consultar usuario por ID 200](Evidencias/04_consultar_usuario_id_200.png)
+![Filtro por estado activo](evidencias/04-filtro-dispositivo.png)
 
-#### Usuario inexistente — 404 Not Found
-![Usuario inexistente 404](Evidencias/05_usuario_inexistente_404.png)
+### 6. Filtro por tipo de dispositivo
 
-#### Filtrar por rol — 200 OK
-![Filtrar por rol 200](Evidencias/06_filtrar_por_rol_200.png)
+![Filtro por tipo de dispositivo](evidencias/04-filtro-dispositivo.png)
 
-#### Filtrar usuarios activos — 200 OK
-![Filtrar activos 200](Evidencias/07_filtrar_usuarios_activos_200.png)
+### 7. Devolución de préstamo
 
-#### Actualización completa PUT — 200 OK
-![PUT 200](Evidencias/08_actualizar_put_200.png)
+![Devolución de préstamo](evidencias/05-devolucion.png)
 
-#### Actualización parcial PATCH — 200 OK
-![PATCH 200](Evidencias/09_actualizar_patch_200.png)
+### 8. Estructura del proyecto con Alembic
 
-#### Eliminación de usuario inexistente — 404 Not Found
-![DELETE usuario inexistente 404](Evidencias/10_eliminar_usuario_inexistente_404.png)
+![Estructura del proyecto con Alembic](evidencias/06-estructura-alembic.png)
 
-#### Creación adicional — 201 Created
-![Creación adicional 201](Evidencias/11_crear_usuario_201_adicional.png)
-
-### Swagger UI — Documentación automática
-![Swagger UI](Evidencias/capturas_SwaggerUIV2.png)
-![Swagger UI V1](Evidencias/Captura_SwaggerUIV1.png)
-
-### ReDoc — Documentación alternativa
-![ReDoc 1](Evidencias/cap_redoc.png)
-![ReDoc 2](Evidencias/cap_redoc1.png)
-
-### POST /users — Creación exitosa (201 Created)
-![Creación Exitosa](Evidencias/Creación_Exitosa.png)
-
-### GET /users — Listar usuarios
-![Listar Usuarios](Evidencias/Listar_Usuarios.png)
-
-### Búsqueda por ID
-![Búsqueda por ID](Evidencias/usuario_id.png)
-
-### PUT /users/{user_id} — Actualización completa (200 OK)
-![Actualización PUT](Evidencias/actualizar_con_PUT.png)
-
-### PATCH /users/{user_id} — Actualización parcial (200 OK)
-![Actualización PATCH](Evidencias/patch.png)
-
-### DELETE /users/{user_id} — Eliminación (204 No Content)
-![Eliminación DELETE](Evidencias/delete.png)
-
-### Error — Correo duplicado (400 Bad Request)
-![Error Correo Duplicado](Evidencias/correo_duplicado.png)
-
-### Error — Correo con formato inválido (422)
-![Error Correo Inválido](Evidencias/Correo_invalido.png)
-
-### Error — Nombre corto y rol inválido (422)
-![Error Nombre y Rol](Evidencias/Error_Nombrecorto_Rolinvalido.png)
-
-### Error — PATCH con body vacío (400 Bad Request)
-![Error PATCH vacío](Evidencias/Error_PATCH_vacio.png)
-
----
+> Se evita mostrar una captura de `alembic init` como evidencia independiente porque la carpeta de migraciones ya estaba creada en el proyecto y el comando `alembic init` no puede ejecutarse sobre un directorio no vacío. La evidencia válida en este caso es la estructura generada del proyecto y la comprobación del historial de migraciones aplicado, junto con la ejecución real de las pruebas funcionales y las consultas en Swagger/Postman.
 
 ## Reflexión
 
-La evolución de esta API permitió aplicar buenas prácticas del desarrollo backend moderno: separar responsabilidades en capas (`routes`, `schemas`, `services`, `dependencies`, `database`, `models`), persistir datos con SQLAlchemy y documentar automáticamente todos los endpoints con **Swagger/OpenAPI**. El manejo estructurado de errores con `HTTPException`, las validaciones de Pydantic y los constraints de la base de datos hacen que la API sea predecible y fácil de consumir desde cualquier cliente.
+Este proyecto demostró la importancia de las migraciones para controlar cambios estructurales sin perder datos ni generar inconsistencias. Las relaciones entre modelos permiten modelar correctamente el negocio y mantener integridad referencial. Además, las consultas con joins y filtros permiten recuperar información útil para reportes, control de inventario y trazabilidad de préstamos. En un backend real, estas tres capacidades son fundamentales para construir APIs seguras, escalables y mantenibles.
+
+## Repositorio GitHub
+
+Rama creada para la entrega:
+
+```text
+device_systems_alembic_relaciones
+```
+
+Comando utilizado:
+
+```powershell
+git checkout -b device_systems_alembic_relaciones
+```
